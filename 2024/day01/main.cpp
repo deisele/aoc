@@ -4,16 +4,10 @@
 #include <QStringList>
 #include <QList>
 #include <QDebug>
-#include <csignal>
-
-void handler(int signal) {
-    Q_UNUSED(signal);
-    Q_ASSERT(0);
-}
+#include <algorithm>
+#include <cstdlib>
 
 int main(int argc, char *argv[]) {
-    signal(SIGABRT, &handler);
-
     QTextStream out(stdout);
 
     QFile file("input");
@@ -24,9 +18,32 @@ int main(int argc, char *argv[]) {
 
     QTextStream in(&file);
 
+    QList<int> listA, listB;
+
     while (!in.atEnd()) {
         QString line = in.readLine();
+        QStringList parts = line.simplified().split(" ");
+
+        listA.append(parts.at(0).toInt());
+        listB.append(parts.at(1).toInt());
     }
+
+    std::ranges::sort(listA);
+    std::ranges::sort(listB);
+
+    int sumPart1 = 0;
+    for (int i = 0; i < listA.size(); i++) {
+        sumPart1 += std::abs(listA[i] - listB[i]);
+    }
+
+    out << "Sum part 1: " << sumPart1 << "\n";
+
+    int sumPart2 = 0;
+    for (int i = 0; i < listA.size(); i++) {
+        sumPart2 += listA[i] * listB.count(listA[i]);
+    }
+
+    out << "Sum part 2: " << sumPart2 << "\n";
 
     return 0;
 }
