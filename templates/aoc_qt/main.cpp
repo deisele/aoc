@@ -4,13 +4,14 @@
 #include <QStringList>
 #include <QList>
 #include <QDebug>
+#include <csignal>
 
 void handler(int signal) {
     Q_UNUSED(signal);
     Q_ASSERT(0);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     signal(SIGABRT, &handler);
 
     QTextStream out(stdout);
